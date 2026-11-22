@@ -9,7 +9,7 @@ const CAPTURE_TIMEOUT_MS = 20000;
 const ROLLOVER_HOUR = 4; // the "day" starts at 4am local time
 const ROOT_ID = "yt10-root";
 
-let snapshot = null; // { day, videos: [{id, title, channel}], progress: {id: 0..1} }
+let snapshot = null; // { day, videos: [{id, title, channel}] }
 let previous = null; // { day, ids: [videoId] } from the last snapshot before today's
 let loaded = false;
 let captureStart = 0;
@@ -76,14 +76,38 @@ function extractCard(card) {
     link.getAttribute("title") ||
     link.getAttribute("aria-label") ||
     "";
-  const channelEl = card.querySelector(
-    "ytd-channel-name a, a[href^='/@'], .yt-content-metadata-view-model-wiz__metadata-text"
-  );
   return {
     id,
     title: title.trim().replace(/\s+/g, " "),
-    channel: channelEl ? channelEl.textContent.trim() : "",
+    channel: channelOf(card),
   };
+}
+
+// Where a card might keep the channel name, most reliable first. The old code
+// took only the FIRST match of one combined selector, and the first match is
+// often the channel's avatar link (same href, no text), which gave a blank name.
+// So: try every candidate and use the first that actually has text.
+const CHANNEL_SELECTORS = [
+  "ytd-channel-name a",
+  "ytd-channel-name #text",
+  "ytd-channel-name",
+  "a[href^='/@']",
+  "a[href^='/channel/']",
+  "a[href^='/c/']",
+  "a[href^='/user/']",
+  ".yt-content-metadata-view-model-wiz__metadata-text",
+  ".yt-content-metadata-view-model__metadata-text",
+];
+const NOT_A_CHANNEL = /\b(views?|watching|ago|waiting|premieres?)\b|^\d[\d.,]*[KMB]?$/i;
+
+function channelOf(card) {
+  for (const sel of CHANNEL_SELECTORS) {
+    for (const node of card.querySelectorAll(sel)) {
+      const text = node.textContent.trim().replace(/\s+/g, " ");
+      if (text && !NOT_A_CHANNEL.test(text)) return text;
+    }
+  }
+  return "";
 }
 
 function collect() {
@@ -109,52 +133,51 @@ async function tryCapture() {
     document.querySelectorAll('ytd-rich-item-renderer a[href^="/watch"]').length
   } watch links, ${videos.length} valid`;
   if (videos.length >= LIMIT || (timedOut && videos.length >= MIN_ON_TIMEOUT)) {
-    snapshot = { day: dayKey(), videos, progress: {} };
-    await save();
-  }
-}
-
-// ---- progress tracking ---------------------------------------------------
-
-// Like YouTube's own red bar: remember how far into each listed video you got.
-async function trackProgress() {
-  if (!snapshot || location.pathname !== "/watch") return;
-  const id = new URLSearchParams(location.search).get("v");
-  if (!id || !snapshot.videos.some((v) => v.id === id)) return;
-  if (document.querySelector("#movie_player.ad-showing")) return; // don't count ads
-  const video = document.querySelector("video");
-  if (!video || !isFinite(video.duration) || video.duration <= 0) return;
-
-  let frac = video.currentTime / video.duration;
-  if (frac > 0.95) frac = 1;
-  snapshot.progress = snapshot.progress || {};
-  if (frac > (snapshot.progress[id] || 0) + 0.01 || (frac === 1 && snapshot.progress[id] !== 1)) {
-    snapshot.progress[id] = frac;
+    snapshot = { day: dayKey(), videos };
     await save();
   }
 }
 
 // ---- fill gaps -----------------------------------------------------------
 
-// Some cards (e.g. collabs) don't expose a channel in the feed DOM. YouTube's
-// same-origin oEmbed endpoint gives us the channel and title by video ID.
-const oembedTried = new Set();
+// Some cards (e.g. collabs) don't expose a channel in the feed DOM, or haven't
+// finished rendering it yet. YouTube's same-origin oEmbed endpoint gives us the
+// channel and title by video ID. Results are cached; transient failures (network
+// blips) are retried a few times, but "this video can't be looked up" answers
+// (4xx, e.g. embedding disabled) are final.
+const oembedCache = new Map(); // id -> in-flight/finished promise of {title, author_name} | null
+
+function lookupOembed(id) {
+  if (!oembedCache.has(id)) {
+    oembedCache.set(
+      id,
+      (async () => {
+        for (let attempt = 0; attempt < 3; attempt++) {
+          try {
+            const res = await fetch(
+              `/oembed?format=json&url=${encodeURIComponent(`https://www.youtube.com/watch?v=${id}`)}`
+            );
+            if (res.ok) return await res.json();
+            if (res.status >= 400 && res.status < 500) return null;
+          } catch {}
+          await new Promise((r) => setTimeout(r, 1500));
+        }
+        return null;
+      })()
+    );
+  }
+  return oembedCache.get(id);
+}
 
 async function fillMissing() {
   if (!snapshot) return false;
   let changed = false;
   for (const v of snapshot.videos) {
-    if ((v.channel && v.title) || oembedTried.has(v.id)) continue;
-    oembedTried.add(v.id);
-    try {
-      const res = await fetch(
-        `/oembed?format=json&url=${encodeURIComponent(`https://www.youtube.com/watch?v=${v.id}`)}`
-      );
-      if (!res.ok) continue;
-      const data = await res.json();
-      if (!v.channel && data.author_name) { v.channel = data.author_name; changed = true; }
-      if (!v.title && data.title) { v.title = data.title; changed = true; }
-    } catch {}
+    if (v.channel && v.title) continue;
+    const data = await lookupOembed(v.id);
+    if (!data) continue;
+    if (!v.channel && data.author_name) { v.channel = data.author_name; changed = true; }
+    if (!v.title && data.title) { v.title = data.title; changed = true; }
   }
   if (changed) await save();
   return changed;
@@ -169,8 +192,8 @@ function el(tag, className, text) {
   return e;
 }
 
-// One card: thumbnail, optional red progress bar, title, channel name.
-function buildCard(v, frac) {
+// One card: thumbnail, title, channel name.
+function buildCard(v) {
   const a = el("a", "yt10-card");
   a.href = `/watch?v=${encodeURIComponent(v.id)}`;
   const thumb = el("div", "yt10-thumb");
@@ -178,13 +201,6 @@ function buildCard(v, frac) {
   img.src = `https://i.ytimg.com/vi/${encodeURIComponent(v.id)}/hqdefault.jpg`;
   img.alt = "";
   thumb.append(img);
-  if (frac > 0) {
-    const bar = el("div", "yt10-progress");
-    const fill = el("div", "yt10-progress-fill");
-    fill.style.width = `${Math.round(Math.min(frac, 1) * 100)}%`;
-    bar.append(fill);
-    thumb.append(bar);
-  }
   a.append(thumb, el("div", "yt10-title", v.title || v.id), el("div", "yt10-channel", v.channel));
   return a;
 }
@@ -206,7 +222,7 @@ function buildRoot() {
   const videos = snapshot.videos.slice(0, LIMIT); // trims older 10-item snapshots
   const grid = el("div", "yt10-grid");
   for (const v of videos) {
-    grid.append(buildCard(v, (snapshot.progress && snapshot.progress[v.id]) || 0));
+    grid.append(buildCard(v));
   }
   root.append(grid);
   return root;
@@ -235,14 +251,6 @@ function render() {
 // off it. The native cards stay in the grid, so infinite scroll keeps working.
 const isSubscriptions = () => location.pathname === "/feed/subscriptions";
 
-function nativeProgress(card) {
-  const bar = card.querySelector(
-    '#progress, [class*="progress-bar"] [style*="width"], [class*="resume-playback"] [style*="width"]'
-  );
-  const pct = bar ? parseFloat(bar.style.width) : NaN;
-  return isFinite(pct) ? pct / 100 : 0;
-}
-
 function restyleSubscriptions() {
   if (!isSubscriptions()) return;
   const cards = document.querySelectorAll(
@@ -258,9 +266,15 @@ function restyleSubscriptions() {
       continue;
     }
     if (!v.title) continue; // not fully rendered yet; retry next pass
-    const frac = nativeProgress(card);
     card.classList.add("yt10-done");
-    card.append(buildCard(v, frac));
+    const ours = buildCard(v);
+    card.append(ours);
+    // Channel not in the page yet (or hidden, e.g. collabs): look it up.
+    if (!v.channel) {
+      lookupOembed(v.id).then((data) => {
+        if (data && data.author_name) ours.querySelector(".yt10-channel").textContent = data.author_name;
+      });
+    }
   }
 }
 
@@ -296,4 +310,47 @@ window.addEventListener("yt-navigate-finish", () => {
 window.addEventListener("popstate", schedule);
 // Re-check capture while the feed is still loading but nothing is mutating.
 setInterval(schedule, 2000);
-setInterval(trackProgress, 2000);
+
+// ---- don't autoplay on entering fullscreen -------------------------------
+
+// On a freshly loaded watch page the video can sit paused (Firefox blocks
+// autoplay), and then YouTube starts it the moment you go fullscreen. If the
+// video was paused just before the switch, put it back to paused when it starts
+// playing within 2 seconds. Any key press or click after the switch cancels the
+// guard, so deliberately pressing play always works.
+const mainVideo = () => document.querySelector("#movie_player video, video.html5-main-video");
+const pausedSamples = []; // paused-state of the video over the last ~500ms (not fullscreen)
+let guardUntil = 0;
+
+setInterval(() => {
+  if (document.fullscreenElement || location.pathname !== "/watch") return;
+  const v = mainVideo();
+  if (!v) return;
+  pausedSamples.push(v.paused);
+  if (pausedSamples.length > 5) pausedSamples.shift();
+}, 100);
+
+function cancelFullscreenGuard() {
+  guardUntil = 0;
+}
+
+document.addEventListener("fullscreenchange", () => {
+  if (location.pathname !== "/watch" || pausedSamples.length === 0) return;
+  // Oldest sample = state from before the click/keypress that caused this.
+  if (pausedSamples[0] !== true) return;
+  guardUntil = Date.now() + 2000;
+  // Wait a tick so the click that triggered fullscreen doesn't cancel the guard.
+  setTimeout(() => {
+    for (const type of ["keydown", "pointerdown"]) {
+      document.addEventListener(type, cancelFullscreenGuard, { capture: true, once: true });
+    }
+  }, 100);
+});
+
+document.addEventListener(
+  "play",
+  (e) => {
+    if (Date.now() < guardUntil && e.target === mainVideo()) e.target.pause();
+  },
+  true
+);

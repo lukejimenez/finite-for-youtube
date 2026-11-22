@@ -75,3 +75,18 @@ ytd-masthead.page-dark-theme #background,
 ytd-masthead.page-dark-theme[frosted-glass-mode] #background {
   background: rgba(15, 15, 15, 0.8) !important;
 }
+
+/* Fullscreen: the top bar is hidden, so reserve no space for it. The !important
+   68px above also overrides YouTube's own reset to 0 in fullscreen, which left
+   the video pushed down by the height of the (invisible) bar. These rules are
+   more specific than the ones above, so they win only while fullscreen. */
+html:has(ytd-watch-flexy[fullscreen]),
+ytd-app[fullscreen],
+ytd-app:has(ytd-watch-flexy[fullscreen]),
+ytd-app[masthead-hidden_],
+ytd-app[fullscreen] ytd-masthead,
+ytd-app:has(ytd-watch-flexy[fullscreen]) ytd-masthead,
+ytd-app[masthead-hidden_] ytd-masthead {
+  --ytd-masthead-height: 0px !important;
+  --ytd-toolbar-height: 0px !important;
+}

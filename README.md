@@ -5,7 +5,6 @@ A Firefox extension that gives you **nine recommended videos a day** on YouTube,
 ## What it does
 - **Home page:** shows a frozen 3×3 grid of the first nine videos YouTube recommends to you each day. Reloading doesn't change it. New picks arrive at 4am.
 - **No repeats:** a video that was in yesterday's nine can't come back today.
-- **Progress bars:** a red bar on each thumbnail shows how far you got in it, like YouTube's own.
 - **Subscriptions page:** same clean grid (thumbnail, title, channel) but with normal infinite scrolling.
 - **Search:** videos only. Shorts, channels, playlists, shelves and ads are hidden.
 - **Watch page:** player centered and a little smaller, with no suggestions, comments or live chat.
@@ -24,7 +23,7 @@ It does **not** work in Chrome, Safari, Edge, or Firefox on phones.
 Updates aren't automatic. When there's a new version, download the new `.xpi` from the `releases` folder and install it the same way. It installs over the old one and keeps your data.
 
 ## Privacy
-Everything stays in your browser. The extension only runs on `www.youtube.com`, saves your daily list and watch progress in Firefox's local extension storage, and sends nothing anywhere. The one network request it makes is to YouTube itself (`/oembed`), to fill in a channel name or title that was missing from the page.
+Everything stays in your browser. The extension only runs on `www.youtube.com`, saves your daily list in Firefox's local extension storage, and sends nothing anywhere. The one network request it makes is to YouTube itself (`/oembed`), to fill in a channel name or title that was missing from the page.
 
 ## Tweaking it
 Everything is plain JavaScript and CSS, with no build step.
@@ -32,8 +31,7 @@ Everything is plain JavaScript and CSS, with no build step.
 | What | Where |
 |---|---|
 | When the day rolls over (default 4am) | `ROLLOVER_HOUR` in `content.js` |
-| How big the thumbnails get | `--yt10-card-max` in `content.css` |
-| When it switches to 2 and 1 columns | `responsive.css` |
+| When it switches to 2 and 1 columns (cards fill the width, no size cap) | `responsive.css` |
 | Top bar height (default 68px) | `searchbar.css` |
 | Watch page player size | `watch.css` |
 

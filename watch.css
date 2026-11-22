@@ -7,19 +7,21 @@
    to have, times 0.9, centered. YouTube's own player sizing is percentage
    based, so the video and its controls scale with the column.
 
-   Only applies in the normal two-column view: theater mode, fullscreen and
+   Applies in the normal two-column view and in theater mode (where the player
+   itself is already full-width, so this centers the title and info below it).
+   Fullscreen and
    narrow windows are left alone. To tune the size: change the 0.9.
    To remove: delete this file and its line in manifest.json. */
 
-ytd-watch-flexy[is-two-columns_]:not([theater]):not([fullscreen]) #secondary {
+ytd-watch-flexy[is-two-columns_]:not([fullscreen]) #secondary {
   display: none !important;
 }
 
-ytd-watch-flexy[is-two-columns_]:not([theater]):not([fullscreen]) #columns {
+ytd-watch-flexy[is-two-columns_]:not([fullscreen]) #columns {
   justify-content: center !important;
 }
 
-ytd-watch-flexy[is-two-columns_]:not([theater]):not([fullscreen]) #primary {
+ytd-watch-flexy[is-two-columns_]:not([fullscreen]) #primary {
   flex: 0 0 auto !important;
   max-width: none !important;
   /* 16px left margin offsets the 16px of padding on the column's right side,
@@ -27,4 +29,72 @@ ytd-watch-flexy[is-two-columns_]:not([theater]):not([fullscreen]) #primary {
   margin: 0 0 0 16px !important;
   /* Original column width = window width - sidebar width - 32px of padding. */
   width: calc((100% - var(--ytd-watch-flexy-sidebar-width, 402px) - 32px) * 0.9) !important;
+}
+
+/* "Ask" button in the action row under the video (next to Share/Save/etc.).
+   Matched by accessible label since YouTube's class names for it are unstable.
+   The wrapper is hidden too (when the browser supports :has) so no gap is left. */
+ytd-watch-metadata yt-button-view-model:has([aria-label^="Ask" i]),
+ytd-watch-metadata button-view-model:has([aria-label^="Ask" i]),
+ytd-watch-metadata [aria-label^="Ask" i] {
+  display: none !important;
+}
+
+/* Suggested videos that appear after a video ends (end screen grid, end cards,
+   autoplay "up next" countdown). Deliberately narrow: these only exist at the
+   end of a video, so they can't affect the controls or fullscreen. One rule
+   per selector so one stale class name can't void the others. */
+.html5-endscreen {
+  display: none !important;
+}
+
+.ytp-endscreen-content {
+  display: none !important;
+}
+
+.videowall-endscreen {
+  display: none !important;
+}
+
+.ytp-ce-element {
+  display: none !important;
+}
+
+.ytp-autonav-endscreen-countdown-overlay {
+  display: none !important;
+}
+
+/* End-of-video suggestions grid (the version in current YouTube). */
+.ytp-fullscreen-grid-stills-container {
+  display: none !important;
+}
+
+/* Player-bar buttons: "Ask" and Picture-in-picture. Matched by class or by
+   accessible label, scoped to buttons inside the player so nothing else on the
+   page is touched. Hides only the button itself, not the bar that holds it. */
+.html5-video-player button.ytp-pip-button {
+  display: none !important;
+}
+
+.html5-video-player button[aria-label^="Picture in picture" i] {
+  display: none !important;
+}
+
+.html5-video-player button[data-tooltip-title^="Picture in picture" i] {
+  display: none !important;
+}
+
+.html5-video-player button[aria-label^="Ask" i] {
+  display: none !important;
+}
+
+.html5-video-player button[data-tooltip-title^="Ask" i] {
+  display: none !important;
+}
+
+/* The "More videos (v)" chevron at the bottom-middle of the player in
+   fullscreen. Only the button itself, not the fullscreen grid containers
+   (hiding those broke the controls before). */
+.ytp-fullscreen-grid-expand-button {
+  display: none !important;
 }

@@ -15,12 +15,10 @@ ytd-browse[page-subtype="subscriptions"] {
 @container yt10 (max-width: 800px) {
   #yt10-root .yt10-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    max-width: 900px;
   }
 
   ytd-browse[page-subtype="subscriptions"] ytd-rich-grid-renderer #contents {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    max-width: 900px !important;
   }
 }
 
@@ -28,11 +26,9 @@ ytd-browse[page-subtype="subscriptions"] {
 @container yt10 (max-width: 520px) {
   #yt10-root .yt10-grid {
     grid-template-columns: minmax(0, 1fr);
-    max-width: 560px;
   }
 
   ytd-browse[page-subtype="subscriptions"] ytd-rich-grid-renderer #contents {
     grid-template-columns: minmax(0, 1fr) !important;
-    max-width: 560px !important;
   }
 }
