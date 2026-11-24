@@ -1,10 +1,10 @@
-# Nine a Day for YouTube
+# Finite for YouTube
 
-A Firefox extension that gives you **nine recommended videos a day** on YouTube, and that's it. No infinite scroll, no endless feed: once you've seen your nine, you find videos yourself by searching.
+A Firefox extension that makes YouTube finite. You get **a small list of recommended videos each day** (nine by default, and you choose the number), and that's it. No infinite scroll, no endless feed: once you've seen your list, you find videos yourself by searching.
 
 ## What it does
 - **Home page:** shows a frozen grid of the first nine videos YouTube recommends to you each day (you can change the number). Reloading doesn't change it. New picks arrive at 4am (you can change that too).
-- **No repeats:** a video that was in yesterday's nine can't come back today.
+- **No repeats:** a video that was in yesterday's list can't come back today.
 - **Subscriptions page:** same clean grid (thumbnail, title, channel) but with normal infinite scrolling.
 - **Search:** videos only. Shorts, channels, playlists, shelves and ads are hidden.
 - **Watch page:** player centered and a little smaller, with no suggestions, comments or live chat.
@@ -43,3 +43,5 @@ Everything is plain JavaScript and CSS, with no build step.
 
 ## Caveats
 This works by reading and restyling YouTube's page, which YouTube changes without notice, so parts of it may break over time. It was built with [Claude Code](https://claude.com/claude-code).
+
+Finite for YouTube is an independent project. It is not affiliated with, endorsed by, or sponsored by YouTube or Google. YouTube is a trademark of Google LLC.

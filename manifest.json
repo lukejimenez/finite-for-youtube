@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Nine a Day for YouTube",
-  "version": "1.0.0",
-  "description": "Limits your YouTube home feed to nine recommended videos per day, with no infinite scroll. Everything stays on your device.",
+  "name": "Finite for YouTube",
+  "version": "1.1.0",
+  "description": "Limits your YouTube home feed to a small daily list, with no infinite scroll. Everything stays on your device.",
   "permissions": [
     "storage"
   ],
@@ -46,7 +46,7 @@
     "96": "icons/icon.svg"
   },
   "action": {
-    "default_title": "Nine a Day settings",
+    "default_title": "Finite settings",
     "default_popup": "popup.html",
     "default_icon": "icons/icon.svg"
   }

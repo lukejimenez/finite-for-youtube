@@ -1,5 +1,5 @@
-// YouTube Ten a Day
-// Snapshots the first 9 videos YouTube serves on the home page each day
+// Finite for YouTube
+// Snapshots the first few videos (9 by default) YouTube serves on the home page each day
 // (skipping any shown yesterday), then shows only that frozen list for the
 // rest of the day.
 
@@ -14,7 +14,6 @@ let snapshot = null; // { day, videos: [{id, title, channel}], limit: how many w
 let previous = null; // { day, ids: [videoId] } from the last snapshot before today's
 let loaded = false;
 let captureStart = 0;
-let lastDebug = "no data yet";
 
 const dayKey = (daysAgo = 0) => dayKeyFor(ROLLOVER_HOUR, daysAgo);
 
@@ -169,9 +168,6 @@ async function tryCapture() {
   const have = snapshot ? snapshot.videos : [];
   const videos = have.concat(collect(have));
   const timedOut = Date.now() - captureStart > CAPTURE_TIMEOUT_MS;
-  lastDebug = `${document.querySelectorAll("ytd-rich-item-renderer").length} cards, ${
-    document.querySelectorAll('ytd-rich-item-renderer a[href^="/watch"]').length
-  } watch links, ${videos.length} valid`;
   // A top-up that can't find more in time keeps what it has.
   const enough = timedOut && (snapshot || videos.length >= Math.min(MIN_ON_TIMEOUT, LIMIT));
   if (videos.length >= LIMIT || enough) {
@@ -253,11 +249,7 @@ function buildRoot() {
   if (!snapshot) {
     root.append(
       el("div", "yt10-header", "Capturing today's recommendations…"),
-      el(
-        "div",
-        "yt10-sub",
-        `Waiting for YouTube to load your feed. (debug: ${lastDebug})`
-      )
+      el("div", "yt10-sub", "Waiting for YouTube to load your feed.")
     );
     return root;
   }
