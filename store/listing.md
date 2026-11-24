@@ -54,4 +54,4 @@ Homepage: https://github.com/lukejimenez/finite-for-youtube
 2. Compatibility: tick Firefox for desktop only. Untick Firefox for Android (the add-on is built for desktop and the popup and layout aren't made for phones). The manifest still declares an Android minimum version only so the "no data collected" declaration validates.
 3. Add a 128x128 or larger icon if the form asks for one, plus a few screenshots (home grid, subscriptions grid, watch page, settings popup).
 4. Fill in support email/site and the homepage (the GitHub repo URL).
-5. Pick a license in the form (not chosen yet).
+5. License: choose "MIT License" in the form (matches the LICENSE file in the repo).

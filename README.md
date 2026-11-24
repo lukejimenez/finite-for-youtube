@@ -45,3 +45,6 @@ Everything is plain JavaScript and CSS, with no build step.
 This works by reading and restyling YouTube's page, which YouTube changes without notice, so parts of it may break over time. It was built with [Claude Code](https://claude.com/claude-code).
 
 Finite for YouTube is an independent project. It is not affiliated with, endorsed by, or sponsored by YouTube or Google. YouTube is a trademark of Google LLC.
+
+## License
+MIT. See [LICENSE](LICENSE).
