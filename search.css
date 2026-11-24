@@ -1,29 +1,30 @@
 /* Search results: channels and playlists are allowed alongside videos.
-   Shorts, mixes, shelves, posts and ads stay hidden. Everything is scoped to
-   ytd-search so it can't affect other pages. One rule per selector so one
-   unsupported selector can't void the rest. */
+   Shorts can be allowed or hidden by the settings toggle. Mixes, shelves,
+   posts and ads stay hidden. Everything is scoped to ytd-search so it can't
+   affect other pages. One rule per selector so one unsupported selector can't
+   void the rest. */
 
-ytd-search ytd-reel-shelf-renderer {
+html[data-yt10-shorts="off"] ytd-search ytd-reel-shelf-renderer {
   display: none !important;
 }
 
-ytd-search grid-shelf-view-model {
+html[data-yt10-shorts="off"] ytd-search grid-shelf-view-model {
   display: none !important;
 }
 
-ytd-search ytd-video-renderer:has(a[href^="/shorts/"]) {
+html[data-yt10-shorts="off"] ytd-search ytd-video-renderer:has(a[href^="/shorts/"]) {
   display: none !important;
 }
 
-ytd-search yt-lockup-view-model:has(a[href^="/shorts/"]) {
+html[data-yt10-shorts="off"] ytd-search yt-lockup-view-model:has(a[href^="/shorts/"]) {
   display: none !important;
 }
 
-ytd-search ytm-shorts-lockup-view-model {
+html[data-yt10-shorts="off"] ytd-search ytm-shorts-lockup-view-model {
   display: none !important;
 }
 
-ytd-search ytm-shorts-lockup-view-model-v2 {
+html[data-yt10-shorts="off"] ytd-search ytm-shorts-lockup-view-model-v2 {
   display: none !important;
 }
 

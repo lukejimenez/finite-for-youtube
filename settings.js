@@ -6,6 +6,7 @@ const DEFAULT_SETTINGS = {
   maxAcross: 3, // most videos side by side (3, 4 or 5); fewer on narrow windows
   resetHour: 4, // the "day" starts at this hour, local time (0-23)
   showComments: true, // show the comments section under videos
+  allowShorts: false, // show Shorts in search results
 };
 const PER_DAY_MIN = 1;
 const PER_DAY_MAX = 30;
@@ -23,6 +24,8 @@ function cleanSettings(raw) {
     resetHour: hour >= 0 && hour <= 23 ? hour : DEFAULT_SETTINGS.resetHour,
     // Only an explicit false turns comments off; missing or invalid means the default.
     showComments: typeof r.showComments === "boolean" ? r.showComments : DEFAULT_SETTINGS.showComments,
+    // Only an explicit false turns Shorts off; missing or invalid means the default.
+    allowShorts: typeof r.allowShorts === "boolean" ? r.allowShorts : DEFAULT_SETTINGS.allowShorts,
   };
 }
 

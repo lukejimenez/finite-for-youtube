@@ -14,15 +14,16 @@ Finite for YouTube turns the endless YouTube home page into a short list you can
 **What it does**
 - Home page: shows a frozen grid of your first recommended videos of the day (nine by default). Reloading doesn't change it. New picks arrive at the hour you choose (4:00 AM by default), and a video that was in yesterday's list can't come back.
 - Subscriptions page: a clean grid (thumbnail, title, channel) with normal infinite scrolling.
-- Search: videos, channels and playlists. Shorts, shelves and ads are hidden.
-- Watch page: player centered, with no suggestions, comments, live chat, end-screen suggestions, or ambient glow.
-- Cleaner top bar and a responsive grid.
+- Search: videos, channels and playlists. Shorts can be allowed or hidden; shelves and ads are hidden.
+- Watch page: player centered and slightly smaller, with no suggestions, live chat, end-screen suggestions, or ambient glow. Comments are shown by default and can be turned off.
+- Cleaner top bar, configurable Shorts visibility, and a responsive grid.
 
 **Settings** (click the toolbar icon)
 - Recommended videos per day (1 to 30, default 9)
 - Most videos across (3, 4 or 5, default 3)
 - Time new recommendations arrive (default 4:00 AM)
 - Show comments under videos (on by default)
+- Enable Shorts (off by default)
 
 **Privacy**
 Everything stays in your browser. The extension runs only on www.youtube.com, saves your daily list and settings in Firefox's local extension storage, and sends nothing anywhere. Its one network request goes to YouTube itself (/oembed), to fill in a channel name or title missing from the page.

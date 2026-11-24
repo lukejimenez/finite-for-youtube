@@ -6,9 +6,9 @@ A Firefox extension that makes YouTube finite. You get **a small list of recomme
 - **Home page:** shows a frozen grid of the first videos YouTube recommends to you each day. Reloading doesn't change it. New picks arrive at 4am by default.
 - **No repeats:** a video that was in yesterday's list can't come back today.
 - **Subscriptions page:** the same clean grid (thumbnail, title, channel), but with normal infinite scrolling.
-- **Search:** videos, channels and playlists. Shorts, shelves and ads are hidden.
+- **Search:** videos, channels and playlists. Shorts can be allowed or hidden; shelves and ads are hidden.
 - **Watch page:** player centered and a little smaller, with no suggestions, live chat, end-screen suggestions or ambient glow. Comments show by default (you can turn them off). The Ask and Picture-in-picture buttons and the fullscreen "More videos" arrow are hidden.
-- **Cleaner chrome:** a slightly taller top bar, no Ask or Shorts buttons, and a soft highlight when you hover a video.
+- **Cleaner chrome:** a slightly taller top bar, no Ask button, a configurable Shorts tab, and a soft highlight when you hover a video.
 - **Responsive:** the grid steps down from your chosen maximum to fewer columns as the window narrows.
 
 ## Settings
@@ -20,13 +20,14 @@ Click the extension's icon in the Firefox toolbar. Changes apply right away, inc
 | Most videos across | 3, 4 or 5 | 3 |
 | New recommendations at | any hour of the day | 4:00 AM |
 | Show comments under videos | on or off | on |
+| Enable Shorts | on or off | off |
 
 If you lower the number of videos, today's list is trimmed to match. If you raise it, today's list is topped up from your feed. Changing the reset hour keeps today's list rather than picking a new one.
 
 ## Install
 Requires **Firefox on desktop, version 140 or newer**. It does not work in Chrome, Safari, Edge, or Firefox on phones.
 
-It is about to be listed the Firefox Add-ons store, and may already be there. Until it's there, you can run it from source (below). An older signed build, 1.0.0 under the previous name "Nine a Day," is in the `releases` folder. It does not have the settings panel or the other changes listed here.
+You can install it from the Firefox Add-ons store once this release is listed. Until then, run it from source (below). An older signed build, 1.0.0 under the previous name "Nine a Day," is in the `releases` folder. It does not have the settings panel or the other changes listed here.
 
 ## Running from source
 1. Open `about:debugging#/runtime/this-firefox`
@@ -43,7 +44,7 @@ Everything is plain JavaScript and CSS, with no build step.
 
 | What | Where |
 |---|---|
-| Videos per day, most across, reset hour, comments | the toolbar icon (defaults in `settings.js`) |
+| Videos per day, most across, reset hour, comments, Shorts | the toolbar icon (defaults in `settings.js`) |
 | Window widths where the grid steps down to fewer columns | `responsive.css` |
 | Top bar height (default 68px) | `searchbar.css` |
 | Watch page player size | `watch.css` |

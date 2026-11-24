@@ -5,6 +5,7 @@ const perDayInput = document.getElementById("perDay");
 const acrossSelect = document.getElementById("maxAcross");
 const hourSelect = document.getElementById("resetHour");
 const commentsBox = document.getElementById("showComments");
+const shortsBox = document.getElementById("allowShorts");
 const statusEl = document.getElementById("status");
 
 // 12-hour labels: "12:00 AM" ... "11:00 PM"
@@ -20,6 +21,7 @@ function show(s) {
   acrossSelect.value = String(s.maxAcross);
   hourSelect.value = String(s.resetHour);
   commentsBox.checked = s.showComments;
+  shortsBox.checked = s.allowShorts;
 }
 
 let statusTimer = null;
@@ -54,6 +56,7 @@ function readForm() {
     maxAcross: acrossSelect.value,
     resetHour: hourSelect.value,
     showComments: commentsBox.checked,
+    allowShorts: shortsBox.checked,
   });
 }
 
@@ -67,6 +70,7 @@ perDayInput.addEventListener("change", onChange);
 acrossSelect.addEventListener("change", onChange);
 hourSelect.addEventListener("change", onChange);
 commentsBox.addEventListener("change", onChange);
+shortsBox.addEventListener("change", onChange);
 
 document.getElementById("reset").addEventListener("click", async () => {
   show(DEFAULT_SETTINGS);

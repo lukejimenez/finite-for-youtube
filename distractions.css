@@ -57,19 +57,19 @@ html[data-yt10-comments="off"] #comments > .ytd-comments.style-scope {
 }
 
 /* Shorts entry in the left sidebar (expanded and collapsed versions). */
-ytd-guide-entry-renderer:has(a[href^="/shorts"]) {
+html[data-yt10-shorts="off"] ytd-guide-entry-renderer:has(a[href^="/shorts"]) {
   display: none !important;
 }
 
-ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]) {
+html[data-yt10-shorts="off"] ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]) {
   display: none !important;
 }
 
-ytd-mini-guide-entry-renderer[aria-label="Shorts"] {
+html[data-yt10-shorts="off"] ytd-mini-guide-entry-renderer[aria-label="Shorts"] {
   display: none !important;
 }
 
-ytd-guide-entry-renderer:has(a[title="Shorts"]) {
+html[data-yt10-shorts="off"] ytd-guide-entry-renderer:has(a[title="Shorts"]) {
   display: none !important;
 }
 
