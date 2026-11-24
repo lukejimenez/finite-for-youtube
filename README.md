@@ -13,7 +13,7 @@ A Firefox extension that makes YouTube finite. You get **a small list of recomme
 - **Settings:** click the extension's icon in the Firefox toolbar to change how many videos you get per day (1–30, default 9), the most videos across (3, 4 or 5, default 3), and the hour new recommendations arrive (default 4:00 AM). Changes apply right away.
 
 ## Install (Firefox on desktop, version 140 or newer)
-1. Download the latest signed file: [nine-a-day-1.0.0.xpi](https://github.com/lukejimenez/youtube-nine-per-day/raw/main/releases/nine-a-day-1.0.0.xpi). If Firefox installs it straight away, great. If it downloads instead, go to step 2.
+1. Download the latest signed file: [nine-a-day-1.0.0.xpi](https://github.com/lukejimenez/finite-for-youtube/raw/main/releases/nine-a-day-1.0.0.xpi). If Firefox installs it straight away, great. If it downloads instead, go to step 2.
 2. Drag the downloaded `.xpi` onto an open Firefox window and click **Add**.
 
 That's it. It's signed by Mozilla, so it installs on regular Firefox with no special settings.

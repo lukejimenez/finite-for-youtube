@@ -38,8 +38,8 @@ Suggested: Photos, Music & Videos (primary), and Appearance.
 youtube, focus, productivity, distraction-free, feed
 
 ## Support
-Support site / email: (add yours)
-Homepage: (add the GitHub repo URL)
+Support site: https://github.com/lukejimenez/finite-for-youtube/issues (or add an email)
+Homepage: https://github.com/lukejimenez/finite-for-youtube
 
 ## Notes for the reviewer
 - No build step, minification or bundling. The uploaded zip is the plain source.
