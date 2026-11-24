@@ -14,7 +14,7 @@ Finite for YouTube turns the endless YouTube home page into a short list you can
 **What it does**
 - Home page: shows a frozen grid of your first recommended videos of the day (nine by default). Reloading doesn't change it. New picks arrive at the hour you choose (4:00 AM by default), and a video that was in yesterday's list can't come back.
 - Subscriptions page: a clean grid (thumbnail, title, channel) with normal infinite scrolling.
-- Search: videos only. Shorts, channels, playlists, shelves and ads are hidden.
+- Search: videos, channels and playlists. Shorts, shelves and ads are hidden.
 - Watch page: player centered, with no suggestions, comments, live chat, end-screen suggestions, or ambient glow.
 - Cleaner top bar and a responsive grid.
 

@@ -1,7 +1,7 @@
-/* Search results: video results only. Hides Shorts, channels, playlists,
-   mixes, shelves, posts and ads. Everything is scoped to ytd-search so it
-   can't affect other pages. One rule per selector so one unsupported
-   selector can't void the rest. */
+/* Search results: channels and playlists are allowed alongside videos.
+   Shorts, mixes, shelves, posts and ads stay hidden. Everything is scoped to
+   ytd-search so it can't affect other pages. One rule per selector so one
+   unsupported selector can't void the rest. */
 
 ytd-search ytd-reel-shelf-renderer {
   display: none !important;
@@ -27,14 +27,6 @@ ytd-search ytm-shorts-lockup-view-model-v2 {
   display: none !important;
 }
 
-ytd-search ytd-channel-renderer {
-  display: none !important;
-}
-
-ytd-search ytd-playlist-renderer {
-  display: none !important;
-}
-
 ytd-search ytd-radio-renderer {
   display: none !important;
 }
@@ -47,7 +39,14 @@ ytd-search ytd-show-renderer {
   display: none !important;
 }
 
-ytd-search yt-lockup-view-model:not(:has(a[href^="/watch"])) {
+ytd-search yt-lockup-view-model:not(:has(
+  a[href^="/watch"],
+  a[href^="/playlist"],
+  a[href^="/@"],
+  a[href^="/channel/"],
+  a[href^="/c/"],
+  a[href^="/user/"]
+)) {
   display: none !important;
 }
 

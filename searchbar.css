@@ -15,6 +15,15 @@ ytd-masthead #container,
   height: 68px !important;
 }
 
+/* YouTube's focused-search layout uses the old 56px bar alignment. Keep the
+   search box centered in our 68px bar while it has focus. */
+ytd-masthead:has(yt-searchbox:focus-within) yt-searchbox,
+ytd-masthead:has(yt-searchbox:focus-within) #voice-search-button,
+ytd-masthead:has(ytd-searchbox:focus-within) ytd-searchbox,
+ytd-masthead:has(ytd-searchbox:focus-within) #voice-search-button {
+  translate: 0 6px !important;
+}
+
 /* The translucent backdrop that videos scroll behind. Two problems fixed:
    1. It has its own height (56px), so the bottom 12px of the taller bar were
       see-through.
