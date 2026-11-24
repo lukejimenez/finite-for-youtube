@@ -3,13 +3,14 @@
 A Firefox extension that gives you **nine recommended videos a day** on YouTube, and that's it. No infinite scroll, no endless feed: once you've seen your nine, you find videos yourself by searching.
 
 ## What it does
-- **Home page:** shows a frozen 3×3 grid of the first nine videos YouTube recommends to you each day. Reloading doesn't change it. New picks arrive at 4am.
+- **Home page:** shows a frozen grid of the first nine videos YouTube recommends to you each day (you can change the number). Reloading doesn't change it. New picks arrive at 4am (you can change that too).
 - **No repeats:** a video that was in yesterday's nine can't come back today.
 - **Subscriptions page:** same clean grid (thumbnail, title, channel) but with normal infinite scrolling.
 - **Search:** videos only. Shorts, channels, playlists, shelves and ads are hidden.
 - **Watch page:** player centered and a little smaller, with no suggestions, comments or live chat.
-- **Cleaner top bar:** a slightly taller bar, centered search, and no voice-search, "Ask", or Shorts buttons.
-- **Responsive:** the grid goes from 3 across to 2 to 1 as the window narrows.
+- **Cleaner top bar:** a slightly taller bar, and no "Ask" or Shorts buttons.
+- **Responsive:** the grid shows up to 3 across (you can allow 4 or 5) and steps down to 2 and 1 as the window narrows.
+- **Settings:** click the extension's icon in the Firefox toolbar to change how many videos you get per day (1–30, default 9), the most videos across (3, 4 or 5, default 3), and the hour new recommendations arrive (default 4:00 AM). Changes apply right away.
 
 ## Install (Firefox on desktop, version 140 or newer)
 1. Download the latest signed file: [nine-a-day-1.0.0.xpi](https://github.com/lukejimenez/youtube-nine-per-day/raw/main/releases/nine-a-day-1.0.0.xpi). If Firefox installs it straight away, great. If it downloads instead, go to step 2.
@@ -30,8 +31,8 @@ Everything is plain JavaScript and CSS, with no build step.
 
 | What | Where |
 |---|---|
-| When the day rolls over (default 4am) | `ROLLOVER_HOUR` in `content.js` |
-| When it switches to 2 and 1 columns (cards fill the width, no size cap) | `responsive.css` |
+| Videos per day, most across, reset hour | the toolbar icon (defaults in `settings.js`) |
+| When the grid steps down to fewer columns | `responsive.css` |
 | Top bar height (default 68px) | `searchbar.css` |
 | Watch page player size | `watch.css` |
 

@@ -3,22 +3,20 @@
 // (skipping any shown yesterday), then shows only that frozen list for the
 // rest of the day.
 
-const LIMIT = 9; // 3x3 grid
+// LIMIT and ROLLOVER_HOUR come from the settings popup (see settings.js).
+let LIMIT = DEFAULT_SETTINGS.perDay; // videos per day
+let ROLLOVER_HOUR = DEFAULT_SETTINGS.resetHour; // the "day" starts at this hour, local time
 const MIN_ON_TIMEOUT = 5; // save fewer than LIMIT if the feed is slow/thin
 const CAPTURE_TIMEOUT_MS = 20000;
-const ROLLOVER_HOUR = 4; // the "day" starts at 4am local time
 const ROOT_ID = "yt10-root";
 
-let snapshot = null; // { day, videos: [{id, title, channel}] }
+let snapshot = null; // { day, videos: [{id, title, channel}], limit: how many were asked for }
 let previous = null; // { day, ids: [videoId] } from the last snapshot before today's
 let loaded = false;
 let captureStart = 0;
 let lastDebug = "no data yet";
 
-function dayKey(daysAgo = 0) {
-  const d = new Date(Date.now() - ROLLOVER_HOUR * 3600 * 1000 - daysAgo * 24 * 3600 * 1000);
-  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
-}
+const dayKey = (daysAgo = 0) => dayKeyFor(ROLLOVER_HOUR, daysAgo);
 
 // Videos shown yesterday can't be picked again today.
 function excludedIds() {
@@ -28,12 +26,48 @@ function excludedIds() {
 const isHome = () => location.pathname === "/";
 
 async function load() {
-  const stored = await browser.storage.local.get(["snapshot", "previous"]);
+  const stored = await browser.storage.local.get(["snapshot", "previous", "settings"]);
   snapshot = stored.snapshot || null;
   previous = stored.previous || null;
+  applySettings(stored.settings);
   await rotateIfStale();
+  await trimSnapshot();
   loaded = true;
 }
+
+function applySettings(raw) {
+  const s = cleanSettings(raw);
+  LIMIT = s.perDay;
+  ROLLOVER_HOUR = s.resetHour;
+  // The grid CSS reads these (content.css, subscriptions.css, responsive.css).
+  const root = document.documentElement;
+  root.style.setProperty("--yt10-max", String(s.maxAcross));
+  root.setAttribute("data-yt10-max", String(s.maxAcross));
+}
+
+// Asked for fewer videos than saved: drop the extras, so tomorrow's "no repeats"
+// only counts videos that were actually shown. (Asking for more later tops the
+// list up from the feed, see tryCapture.)
+async function trimSnapshot() {
+  if (!snapshot || snapshot.videos.length <= LIMIT) return;
+  snapshot.videos = snapshot.videos.slice(0, LIMIT);
+  snapshot.limit = LIMIT;
+  await save();
+}
+
+// The popup changed a setting: re-read everything it may have touched, and
+// redraw. (Our own snapshot saves don't include "settings", so they're ignored.)
+browser.storage.onChanged.addListener(async (changes, area) => {
+  if (area !== "local" || !changes.settings) return;
+  const stored = await browser.storage.local.get(["snapshot", "previous", "settings"]);
+  snapshot = stored.snapshot || null;
+  previous = stored.previous || null;
+  applySettings(stored.settings);
+  await rotateIfStale();
+  await trimSnapshot();
+  captureStart = 0;
+  schedule();
+});
 
 // If the saved snapshot is from an earlier day, remember its video IDs (so
 // they can be excluded) and clear it so a fresh one gets captured. Runs on
@@ -110,30 +144,38 @@ function channelOf(card) {
   return "";
 }
 
-function collect() {
+// New videos from the live feed, skipping yesterday's and any already in `have`,
+// enough to bring the list up to LIMIT.
+function collect(have = []) {
   const seen = excludedIds();
+  for (const v of have) seen.add(v.id);
   const videos = [];
   for (const card of document.querySelectorAll("ytd-rich-item-renderer")) {
+    if (have.length + videos.length >= LIMIT) break;
     const v = extractCard(card);
     if (!v || seen.has(v.id)) continue;
     seen.add(v.id);
     videos.push(v);
-    if (videos.length === LIMIT) break;
   }
   return videos;
 }
 
 async function tryCapture() {
   await rotateIfStale();
-  if (snapshot) return;
+  // A saved list is final, unless the user has since asked for more videos
+  // than it was made with (older saves had no "limit": they were made with 9).
+  if (snapshot && (snapshot.limit ?? DEFAULT_SETTINGS.perDay) >= LIMIT) return;
   if (!captureStart) captureStart = Date.now();
-  const videos = collect();
+  const have = snapshot ? snapshot.videos : [];
+  const videos = have.concat(collect(have));
   const timedOut = Date.now() - captureStart > CAPTURE_TIMEOUT_MS;
   lastDebug = `${document.querySelectorAll("ytd-rich-item-renderer").length} cards, ${
     document.querySelectorAll('ytd-rich-item-renderer a[href^="/watch"]').length
   } watch links, ${videos.length} valid`;
-  if (videos.length >= LIMIT || (timedOut && videos.length >= MIN_ON_TIMEOUT)) {
-    snapshot = { day: dayKey(), videos };
+  // A top-up that can't find more in time keeps what it has.
+  const enough = timedOut && (snapshot || videos.length >= Math.min(MIN_ON_TIMEOUT, LIMIT));
+  if (videos.length >= LIMIT || enough) {
+    snapshot = { day: dayKey(), videos, limit: LIMIT };
     await save();
   }
 }
@@ -311,40 +353,55 @@ window.addEventListener("popstate", schedule);
 // Re-check capture while the feed is still loading but nothing is mutating.
 setInterval(schedule, 2000);
 
-// ---- don't autoplay on entering fullscreen -------------------------------
+// ---- don't autoplay on entering fullscreen / theater mode ----------------
 
 // On a freshly loaded watch page the video can sit paused (Firefox blocks
-// autoplay), and then YouTube starts it the moment you go fullscreen. If the
-// video was paused just before the switch, put it back to paused when it starts
-// playing within 2 seconds. Any key press or click after the switch cancels the
-// guard, so deliberately pressing play always works.
+// autoplay), and then YouTube starts it the moment you go fullscreen or switch
+// to theater mode. If the video was paused just before the switch, put it back
+// to paused when it starts playing within 2 seconds. Any key press or click
+// after the switch cancels the guard, so deliberately pressing play always works.
 const mainVideo = () => document.querySelector("#movie_player video, video.html5-main-video");
-const pausedSamples = []; // paused-state of the video over the last ~500ms (not fullscreen)
+const pausedSamples = []; // paused-state of the video over the last ~500ms
 let guardUntil = 0;
+let navAt = Date.now(); // when this page, or the last in-app navigation, started loading
+window.addEventListener("yt-navigate-finish", () => { navAt = Date.now(); });
 
 setInterval(() => {
-  if (document.fullscreenElement || location.pathname !== "/watch") return;
+  if (location.pathname !== "/watch") return;
   const v = mainVideo();
   if (!v) return;
   pausedSamples.push(v.paused);
   if (pausedSamples.length > 5) pausedSamples.shift();
 }, 100);
 
-function cancelFullscreenGuard() {
+function cancelPlayGuard() {
   guardUntil = 0;
 }
 
-document.addEventListener("fullscreenchange", () => {
+// Called the moment the view mode changes (fullscreen or theater).
+function armPlayGuard() {
   if (location.pathname !== "/watch" || pausedSamples.length === 0) return;
+  // Ignore changes while the page is still loading (YouTube applies your saved
+  // theater setting then, and normal autoplay must not be blocked).
+  if (Date.now() - navAt < 2500) return;
   // Oldest sample = state from before the click/keypress that caused this.
   if (pausedSamples[0] !== true) return;
   guardUntil = Date.now() + 2000;
-  // Wait a tick so the click that triggered fullscreen doesn't cancel the guard.
+  // Wait a tick so the click that triggered the switch doesn't cancel the guard.
   setTimeout(() => {
     for (const type of ["keydown", "pointerdown"]) {
-      document.addEventListener(type, cancelFullscreenGuard, { capture: true, once: true });
+      document.addEventListener(type, cancelPlayGuard, { capture: true, once: true });
     }
   }, 100);
+}
+
+document.addEventListener("fullscreenchange", armPlayGuard);
+
+// Theater mode is just an attribute on <ytd-watch-flexy>; there's no event for it.
+new MutationObserver(armPlayGuard).observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ["theater"],
+  subtree: true,
 });
 
 document.addEventListener(

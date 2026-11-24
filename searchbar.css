@@ -1,29 +1,3 @@
-/* Center the top search bar on the window, at any window size.
-
-   Why it was off-center: the top bar is [start | search | end] spread with
-   "space-between". YouTube gives the end section (account buttons) a
-   min-width of 225px even when it's empty, but the start section (logo and
-   menu) is only 169px wide, so the search bar lands (169 - 225) / 2 = 28px
-   left of center. Hiding the buttons doesn't help because the reserved
-   225px stays.
-
-   Fix: make the two side sections equal in width (both grow equally, both at
-   least 225px so nothing gets squeezed), which puts the search bar exactly
-   in the middle regardless of window size.
-
-   To remove: delete this file and its line in manifest.json. */
-
-ytd-masthead #start {
-  flex: 1 1 0 !important;
-  min-width: 225px !important;
-}
-
-ytd-masthead #end {
-  flex: 1 1 0 !important;
-  min-width: 225px !important;
-  justify-content: flex-end !important;
-}
-
 /* Breathing room: make the top bar 68px instead of 56px. The search bar stays
    vertically centered in it, so it gets (68 - 40) / 2 = 14px above and below
    instead of 8px. YouTube positions the page content from the first two

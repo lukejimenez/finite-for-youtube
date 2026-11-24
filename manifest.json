@@ -26,6 +26,7 @@
         "https://www.youtube.com/*"
       ],
       "js": [
+        "settings.js",
         "content.js"
       ],
       "css": [
@@ -39,5 +40,14 @@
       ],
       "run_at": "document_start"
     }
-  ]
+  ],
+  "icons": {
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  },
+  "action": {
+    "default_title": "Nine a Day settings",
+    "default_popup": "popup.html",
+    "default_icon": "icons/icon.svg"
+  }
 }

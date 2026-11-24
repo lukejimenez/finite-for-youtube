@@ -18,10 +18,10 @@ ytd-browse[page-subtype="subscriptions"] ytd-rich-grid-renderer #primary {
   width: 100% !important;
 }
 
-/* Same grid as the home page: 3 equal columns, no size cap, same gap. */
+/* Same grid as the home page: --yt10-max equal columns, no size cap, same gap. */
 ytd-browse[page-subtype="subscriptions"] ytd-rich-grid-renderer #contents {
   display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(var(--yt10-max, 3), minmax(0, 1fr)) !important;
   gap: 20px 16px !important;
   max-width: none !important;
   margin: 0 auto !important;

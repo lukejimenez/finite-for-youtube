@@ -98,3 +98,17 @@ ytd-watch-metadata [aria-label^="Ask" i] {
 .ytp-fullscreen-grid-expand-button {
   display: none !important;
 }
+
+/* The ambient "glow" behind the video (YouTube calls it cinematics). One rule
+   per selector, since YouTube's names for it vary. */
+#cinematics {
+  display: none !important;
+}
+
+#cinematics-container {
+  display: none !important;
+}
+
+ytd-cinematic-container-renderer {
+  display: none !important;
+}

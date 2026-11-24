@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Nine a Day settings</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <h1>Nine a Day</h1>
+
+  <label for="perDay">Recommended videos per day</label>
+  <input id="perDay" type="number" min="1" max="30" step="1">
+
+  <label for="maxAcross">Most videos across</label>
+  <select id="maxAcross">
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+  </select>
+  <p class="hint">Fewer fit across on narrower windows.</p>
+
+  <label for="resetHour">New recommendations at</label>
+  <select id="resetHour"></select>
+
+  <div class="footer">
+    <span id="status" role="status"></span>
+    <button id="reset" type="button">Reset to defaults</button>
+  </div>
+
+  <script src="settings.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
