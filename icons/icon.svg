@@ -1,15 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-  <!-- 3x3 grid of rounded squares. context-fill follows the toolbar's text color
-       (light or dark theme); #666 is the fallback. -->
-  <g fill="context-fill #666">
-    <rect x="4" y="4" width="11" height="11" rx="3"/>
-    <rect x="18.5" y="4" width="11" height="11" rx="3"/>
-    <rect x="33" y="4" width="11" height="11" rx="3"/>
-    <rect x="4" y="18.5" width="11" height="11" rx="3"/>
-    <rect x="18.5" y="18.5" width="11" height="11" rx="3"/>
-    <rect x="33" y="18.5" width="11" height="11" rx="3"/>
-    <rect x="4" y="33" width="11" height="11" rx="3"/>
-    <rect x="18.5" y="33" width="11" height="11" rx="3"/>
-    <rect x="33" y="33" width="11" height="11" rx="3"/>
-  </g>
+  <!-- An infinity sign with a slash through it: "not endless". The slash has a gap
+       cut out of the infinity (the mask) so the two never run together.
+       The mask must cover the whole icon (userSpaceOnUse): by default it only
+       covers the infinity's own box, which clips the outer edge of the loops flat.
+       context-fill follows the toolbar's text color (light or dark theme);
+       #666 is the fallback where that isn't supported. -->
+  <defs>
+    <mask id="gap" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48">
+      <rect width="48" height="48" fill="#fff"/>
+      <line x1="9" y1="40" x2="39" y2="8" stroke="#000" stroke-width="9" stroke-linecap="round"/>
+    </mask>
+  </defs>
+  <path mask="url(#gap)" fill="none" stroke="context-fill #666" stroke-width="4" stroke-linejoin="round"
+        d="M24 24C20 17.5 16 15 12.5 15C8 15 4.5 19 4.5 24C4.5 29 8 33 12.5 33C16 33 20 30.5 24 24C28 17.5 32 15 35.5 15C40 15 43.5 19 43.5 24C43.5 29 40 33 35.5 33C32 33 28 30.5 24 24Z"/>
+  <line x1="9" y1="40" x2="39" y2="8" stroke="context-fill #666" stroke-width="4" stroke-linecap="round"/>
 </svg>
