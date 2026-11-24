@@ -5,6 +5,7 @@ const DEFAULT_SETTINGS = {
   perDay: 9, // recommended videos per day
   maxAcross: 3, // most videos side by side (3, 4 or 5); fewer on narrow windows
   resetHour: 4, // the "day" starts at this hour, local time (0-23)
+  showComments: true, // show the comments section under videos
 };
 const PER_DAY_MIN = 1;
 const PER_DAY_MAX = 30;
@@ -20,6 +21,8 @@ function cleanSettings(raw) {
     perDay: perDay >= PER_DAY_MIN && perDay <= PER_DAY_MAX ? perDay : DEFAULT_SETTINGS.perDay,
     maxAcross: ACROSS_OPTIONS.includes(across) ? across : DEFAULT_SETTINGS.maxAcross,
     resetHour: hour >= 0 && hour <= 23 ? hour : DEFAULT_SETTINGS.resetHour,
+    // Only an explicit false turns comments off; missing or invalid means the default.
+    showComments: typeof r.showComments === "boolean" ? r.showComments : DEFAULT_SETTINGS.showComments,
   };
 }
 

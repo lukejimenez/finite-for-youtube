@@ -30,6 +30,18 @@ select {
   font: inherit;
 }
 
+label.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+label.check input {
+  width: auto;
+  margin: 0;
+}
+
 .hint {
   margin: 4px 0 0;
   font-size: 12px;

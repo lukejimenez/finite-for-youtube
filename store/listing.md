@@ -22,6 +22,7 @@ Finite for YouTube turns the endless YouTube home page into a short list you can
 - Recommended videos per day (1 to 30, default 9)
 - Most videos across (3, 4 or 5, default 3)
 - Time new recommendations arrive (default 4:00 AM)
+- Show comments under videos (on by default)
 
 **Privacy**
 Everything stays in your browser. The extension runs only on www.youtube.com, saves your daily list and settings in Firefox's local extension storage, and sends nothing anywhere. Its one network request goes to YouTube itself (/oembed), to fill in a channel name or title missing from the page.

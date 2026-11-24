@@ -46,7 +46,9 @@ ytd-guide-section-renderer.ytd-guide-renderer.style-scope:nth-of-type(4) {
   display: none !important;
 }
 
-#comments > .ytd-comments.style-scope {
+/* Comments are shown unless the "Show comments" setting is off (content.js sets
+   data-yt10-comments on <html>; until settings load it is absent, so shown). */
+html[data-yt10-comments="off"] #comments > .ytd-comments.style-scope {
   display: none !important;
 }
 

@@ -10,7 +10,7 @@ A Firefox extension that makes YouTube finite. You get **a small list of recomme
 - **Watch page:** player centered and a little smaller, with no suggestions, comments or live chat.
 - **Cleaner top bar:** a slightly taller bar, and no "Ask" or Shorts buttons.
 - **Responsive:** the grid shows up to 3 across (you can allow 4 or 5) and steps down to 2 and 1 as the window narrows.
-- **Settings:** click the extension's icon in the Firefox toolbar to change how many videos you get per day (1–30, default 9), the most videos across (3, 4 or 5, default 3), and the hour new recommendations arrive (default 4:00 AM). Changes apply right away.
+- **Settings:** click the extension's icon in the Firefox toolbar to change how many videos you get per day (1–30, default 9), the most videos across (3, 4 or 5, default 3), the hour new recommendations arrive (default 4:00 AM), and whether to show comments under videos (shown by default). Changes apply right away.
 
 ## Install (Firefox on desktop, version 140 or newer)
 1. Download the latest signed file: [nine-a-day-1.0.0.xpi](https://github.com/lukejimenez/finite-for-youtube/raw/main/releases/nine-a-day-1.0.0.xpi). If Firefox installs it straight away, great. If it downloads instead, go to step 2.

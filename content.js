@@ -42,6 +42,7 @@ function applySettings(raw) {
   const root = document.documentElement;
   root.style.setProperty("--yt10-max", String(s.maxAcross));
   root.setAttribute("data-yt10-max", String(s.maxAcross));
+  root.setAttribute("data-yt10-comments", s.showComments ? "on" : "off"); // see distractions.css
 }
 
 // Asked for fewer videos than saved: drop the extras, so tomorrow's "no repeats"
